@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>China</title>
+    <script src="js/echarts.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div id="main" style="width: 600px;height:400px;"></div>
+
+<script>
+    var myChart = echarts.init(document.getElementById('main'));
+    var label =41;
+
+    $(function () {
+        $.ajax({
+            type:'post',
+            url:'/China/getEcharts',
+            data: {},
+            dataType:'json',
+            success:function (rs) {
+
+                // 指定图表的配置项和数据
+                var option = {
+                    // 标题
+                    title: {
+                        text: rs[label].country
+                    },
+                    // 提示栏
+                    tooltip: {},
+                    // 提示图标的数据
+                    legend: {
+                        data:['6666666']
+                    },
+                    // x轴上的数据
+                    xAxis: {
+                        // 数组
+                        data: rs[label].month
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: 'MonthlyCase',
+                        type: 'line', // 图表类型
+                        data: rs[label].monthlyCase // 具体的值
+                    },
+                        {
+                            name: 'MonthlyDeath',
+                            type: 'line', // 图表类型
+                            data: rs[label].monthlyDeath // 具体的值
+                        }
+                    ]
+                };
+                // 将设置好的数据 添加到echarts对象中
+                myChart.setOption(option);
+            }
+        })
+    })
+
+</script>
+<div id="main2" style="width: 600px;height:400px;"></div>
+<script>
+    var myChart2 = echarts.init(document.getElementById('main2'));
+    var label = 41;
+    $(function () {
+        $.ajax({
+            type:'post',
+            url:'/China/getEcharts',
+            data: {},
+            dataType:'json',
+            success:function (rs) {
+                // 指定图表的配置项和数据
+                var option = {
+                    // 标题
+                    title: {
+                        text: rs[label].country
+                    },
+                    // 提示栏
+                    tooltip: {},
+                    // 提示图标的数据
+                    legend: {
+                        data:['6666666']
+                    },
+                    // x轴上的数据
+                    xAxis: {
+                        type:'category',
+                        data: rs[label].month
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: 'MonthlyCase',
+                        type: 'bar', // 图表类型
+                        showBackground:true,
+                        backgroundStyle:{
+                            color:'rgba(156,56,100,0.6)'
+                        },
+                        data: rs[label].monthlyCase // 具体的值
+                    },
+                        {
+                            name: 'MonthlyDeath',
+                            type: 'bar', // 图表类型
+                            showBackground:true,
+                            backgroundStyle:{
+                                color:'rgba(156,56,100,0.6)'
+                            },
+                            data: rs[11].monthlyDeath // 具体的值
+                        }],
+
+                };
+                // 将设置好的数据 添加到echarts对象中
+                myChart2.setOption(option);
+            }
+        })
+    })
+
+</script>
+
+</body>
+</html>

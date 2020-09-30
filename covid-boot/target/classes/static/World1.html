@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Awesome-pyecharts</title>
+    <!-- 下面两行的意思是，浏览器从网络上获取echart包，而不需要你配置任何编程环境  -->
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+    <script type="text/javascript" src="https://assets.pyecharts.org/assets/maps/world.js"></script>
+    <link href="css/covid-boot.css" rel="stylesheet">
+
+
+
+</head>
+<body>
+
+<!-- div标签表示一个块，它是我们的图片容器。所以属性style里 宽度和高度是可以自定义的，1800px代表1800像素，块的宽度和高度于生成图片的尺寸相关，在下面的饼状图中则同理。-->
+<div id="title" >全球疫情实时追踪</div>
+
+<div id="context"></div>
+
+<select id = selectMonth>
+    <option>-请选择月份-</option>
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+    <option>5</option>
+    <option>6</option>
+    <option>7</option>
+    <option>8</option>
+    <option>9</option>
+
+</select>
+
+<button id="btn">选择月份获取疫情数据</button>
+
+<div id="container" class="chart-container" style="width:1800px; height:1200px;"></div>
+
+
+
+<script>
+    var allData=[];
+    var allCountry=[];
+    var allCase=[];
+    var allDeath=[];
+    var country;
+    var monthly_case;
+    var monthly_death;
+    var color;
+    //  所有的脚本代码都写在script标签里
+    var mydata;
+    $('#btn').click(function () {
+        // alert('你点击了!');
+        var selectMonth = document.getElementById("selectMonth");
+        var index = selectMonth.selectedIndex;
+        var monthValue = selectMonth.options[index].value;
+
+        $.ajax({
+            type:'post',
+
+            url:"/Covid19/getAllByMonth",
+            data: {
+
+
+                month:monthValue
+
+            },
+            dataType: 'json',
+
+            success: function (data) {
+                mydata = data;
+                //console.log(data);
+                allData=[];
+                allCountry=[];
+                allCase=[];
+                allDeath=[];
+
+                for(var i in data){
+                     country = data[i].country;
+                     monthly_case = data[i].monthly_Case;
+                     monthly_death = data[i].monthly_Death;
+                    if( monthly_case>0 && monthly_case<= 100){
+                         color = "#FAF0E6"
+                    }else if( monthly_case>100 && monthly_case <= 1000){
+                         color = "#FFE4C4"
+                    }else if( monthly_case>1000 && monthly_case <= 10000){
+                        var color = "#F4A460"
+                    }else if( monthly_case >10000 && monthly_case <= 100000){
+                         color = "#FF7F50"
+                    }else if(monthly_case >100000 && monthly_case <=500000){
+                         color = "#FF6347"
+                    }else if(monthly_case >500000 && monthly_case <= 1000000){
+                         color = "#FF0000"
+                    }else if(monthly_case >1000000){
+                         color = "#8B0000"
+                    }
+
+                    var o = {"name":country,"value":monthly_case,"value2":monthly_death,'itemStyle':{'color':color}}
+                    allData.push(o);
+                    allCountry.push(country);
+                    allCase.push(monthly_case);
+                    allDeath.push(monthly_death);
+
+                   //console.log(allCountry);
+                }
+              // console.log(allCountry);
+
+
+
+                option_container.series[0].data=allData;
+                option_container.series[1].data=allDeath;
+                console.log(option_container.series[1].data)
+                chart_container.setOption(option_container);
+                //$('#context').text(data);
+
+
+            }
+        })
+    })
+
+
+    var chart_container = echarts.init(
+        document.getElementById('container'), 'white', {renderer: 'canvas'});
+    // var option代表定义一个名为option的变量，后面花括号里的代表我们需要作图的参数设置
+    var option_container = {
+        // 默认的颜色数组 （如果不明确设置每个数据项的颜色，则会采用默认的数组
+        // 此处的颜色为十六进制表示，也可以使用rgb来表示。简单地理解就是一串字符就代表一个颜色，挑选喜欢的颜色可以自行搜索颜色
+        "color": ["#ac6767","#1d953f","#6950a1","#918597"],
+        "series": [
+            {
+                // 图标类型为 地图
+                "type": "map",
+                "name": "月新增感染病例",
+                "label": {
+                    "show": false,
+                    "position": "top",
+                    "margin": 8
+                },
+
+                "mapType": "world",  // 地图类型为 世界地图
+                "roam": true,
+                "zoom": 1,
+                // 去除各个国家上的小红点
+                "showLegendSymbol": false,
+            },
+
+
+        ],
+
+
+
+        // 鼠标悬浮，单击产生的效果（在网页上可以动态显示）
+        "tooltip": {
+            "show": true,
+            "trigger": "item",
+            "triggerOn": "mousemove|click",
+            "axisPointer": {
+                "type": "line"
+            },
+            "textStyle": {
+                "fontSize": 14
+            },
+            "borderWidth": 0
+        }
+    };
+    chart_container.setOption(option_container);
+    chart_container.on('click', function (param){
+        var selected = param.name;
+        if (selected) {
+            switch(selected){
+                case 'China':
+                    location.href = "getByCountry.html";
+                    break;
+            }
+
+        }
+    });
+    window.onresize = chart_container.resize();
+
+</script>
+</body>
+</html>

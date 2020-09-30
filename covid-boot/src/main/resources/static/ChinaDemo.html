@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Covid19</title>
+    <script src="js/echarts.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div id="main" style="width: 600px;height:400px;"></div>
+<script>
+    var myChart = echarts.init(document.getElementById('main'));
+    $(function () {
+        $.ajax({
+            type:'post',
+            url:'/China/getEcharts',
+            data: {},
+            dataType:'json',
+            success:function (rs) {
+                // 指定图表的配置项和数据
+                var option = {
+                    // 标题
+                    title: {
+                        text: 'Covid19 Analysis and Visualization'
+                    },
+                    // 提示栏
+                    tooltip: {},
+                    // 提示图标的数据
+                    legend: {
+                        data:['China6666666']
+                    },
+                    // x轴上的数据
+                    xAxis: {
+                        // 数组
+                        data: rs.monthly
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: 'MonthlyCase',
+                        type: 'line', // 图表类型
+                        data: rs.monthlyCase // 具体的值
+                    }]
+                };
+                // 将设置好的数据 添加到echarts对象中
+                myChart.setOption(option);
+            }
+        })
+    })
+
+</script>
+</body>
+</html>

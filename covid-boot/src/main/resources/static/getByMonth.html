@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Get By Month</title>
+    <!-- 要使用jquery相关的内容就必须引用jquery-->
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <!--div是一个块,一般可以用来装载其他元素-->
+    <div id="context"></div>
+    <select id = selectMonth>
+        <option>-请选择月份-</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+    </select>
+
+    <button id="btn">选择月份获取疫情数据</button>
+
+
+<script>
+    // $('#btn') == document.getElementById('btn')  #id 可以准确获取到某个元素
+    var mydata;
+    $('#btn').click(function () {
+        // alert('你点击了!');
+        var selectMonth = document.getElementById("selectMonth");
+        var index = selectMonth.selectedIndex;
+        var monthValue = selectMonth.options[index].value;
+
+        $.ajax({
+           type:'post',
+            url:"/Covid19/getByMonth",
+            data: {
+                month:monthValue
+            },
+            dataType: 'json',
+            success: function (data) {
+               mydata = data;
+                console.log(data);
+                $('#context').text(data);
+            }
+        })
+    })
+
+</script>
+
+
+
+</body>
+</html>
